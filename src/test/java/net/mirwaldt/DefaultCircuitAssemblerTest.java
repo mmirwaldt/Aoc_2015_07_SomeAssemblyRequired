@@ -4,15 +4,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.math.MathContext;
 import java.util.SortedMap;
-import java.util.SortedSet;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PartOneCircuitAssemblerTest {
-    private final static CircuitAssembler circuitAssembler = new PartOneCircuitAssembler();
+public class DefaultCircuitAssemblerTest {
+    private final static CircuitAssembler circuitAssembler = new DefaultCircuitAssembler();
 
     private static Stream<Arguments> circuitAssembler() {
         return Stream.of(Arguments.of(circuitAssembler));

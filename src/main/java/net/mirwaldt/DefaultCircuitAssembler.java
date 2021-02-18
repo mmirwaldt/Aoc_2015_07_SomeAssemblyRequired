@@ -2,7 +2,7 @@ package net.mirwaldt;
 
 import java.util.*;
 
-public class PartOneCircuitAssembler implements CircuitAssembler {
+public class DefaultCircuitAssembler implements CircuitAssembler {
 
     private final SortedMap<String, Expression> expressionByVars = new TreeMap<>();
 
@@ -25,33 +25,9 @@ public class PartOneCircuitAssembler implements CircuitAssembler {
             final Integer leftInt = tryParseInt(left);
             final Integer rightInt = tryParseInt(right);
             if(operator.equals("AND")) {
-                if(leftInt == null && rightInt == null) {
-                    expressionByVars.put(result,
-                            new And(new Variable(expressionByVars, left),
-                                    new Variable(expressionByVars, right)));
-                } else if(leftInt == null) {
-                    expressionByVars.put(result,
-                            new And(new Variable(expressionByVars, left),
-                                    new Value(rightInt)));
-                } else {
-                    expressionByVars.put(result,
-                            new And(new Value(leftInt),
-                                    new Variable(expressionByVars, right)));
-                }
+                createAnd(left, right, result, leftInt, rightInt);
             } else if(operator.equals("OR")) {
-                if(leftInt == null && rightInt == null) {
-                    expressionByVars.put(result,
-                            new Or(new Variable(expressionByVars, left),
-                                    new Variable(expressionByVars, right)));
-                } else if(leftInt == null) {
-                    expressionByVars.put(result,
-                            new Or(new Variable(expressionByVars, left),
-                                    new Value(rightInt)));
-                } else {
-                    expressionByVars.put(result,
-                            new Or(new Value(leftInt),
-                                    new Variable(expressionByVars, right)));
-                }
+                createOr(left, right, result, leftInt, rightInt);
             } else if(operator.equals("LSHIFT")) {
                 expressionByVars.put(result,
                         new LShift(new Variable(expressionByVars, left), Integer.parseInt(right)));
@@ -63,6 +39,38 @@ public class PartOneCircuitAssembler implements CircuitAssembler {
             }
         } else {
             throw new IllegalArgumentException("Wrong syntax in circuit '" + circuit + "'");
+        }
+    }
+
+    private void createOr(String left, String right, String result, Integer leftInt, Integer rightInt) {
+        if(leftInt == null && rightInt == null) {
+            expressionByVars.put(result,
+                    new Or(new Variable(expressionByVars, left),
+                            new Variable(expressionByVars, right)));
+        } else if(leftInt == null) {
+            expressionByVars.put(result,
+                    new Or(new Variable(expressionByVars, left),
+                            new Value(rightInt)));
+        } else {
+            expressionByVars.put(result,
+                    new Or(new Value(leftInt),
+                            new Variable(expressionByVars, right)));
+        }
+    }
+
+    private void createAnd(String left, String right, String result, Integer leftInt, Integer rightInt) {
+        if(leftInt == null && rightInt == null) {
+            expressionByVars.put(result,
+                    new And(new Variable(expressionByVars, left),
+                            new Variable(expressionByVars, right)));
+        } else if(leftInt == null) {
+            expressionByVars.put(result,
+                    new And(new Variable(expressionByVars, left),
+                            new Value(rightInt)));
+        } else {
+            expressionByVars.put(result,
+                    new And(new Value(leftInt),
+                            new Variable(expressionByVars, right)));
         }
     }
 
