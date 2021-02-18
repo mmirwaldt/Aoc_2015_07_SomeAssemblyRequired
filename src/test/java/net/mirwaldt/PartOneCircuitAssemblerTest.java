@@ -101,7 +101,7 @@ public class PartOneCircuitAssemblerTest {
         circuitAssembler.assemble( "x AND y -> xay");
         circuitAssembler.assemble("x AND z -> xaz");
         circuitAssembler.assemble("y AND z -> yaz");
-        circuitAssembler.assemble("z NOT u -> zau");
+        circuitAssembler.assemble("z AND u -> zau");
         final SortedMap<String, Integer> result = circuitAssembler.evaluate();
         assertEquals(xay, result.get("xay"));
         assertEquals(xaz, result.get("xaz"));
@@ -162,6 +162,7 @@ public class PartOneCircuitAssemblerTest {
         circuitAssembler.assemble("x AND y -> d");
         circuitAssembler.assemble("x OR y -> e");
         circuitAssembler.assemble("x LSHIFT 2 -> f");
+        circuitAssembler.assemble("y RSHIFT 2 -> g");
         circuitAssembler.assemble("NOT x -> h");
         circuitAssembler.assemble("NOT y -> i");
         SortedMap<String, Integer> result = circuitAssembler.evaluate();
