@@ -10,7 +10,11 @@ public class PartOneCircuitAssembler implements CircuitAssembler {
     public void assemble(String circuit) {
         final String[] tokens = circuit.trim().split(" ");
         if(tokens.length == 3) {
-            expressionByVars.put(tokens[2], new Value(Integer.parseInt(tokens[0])));
+            try {
+                expressionByVars.put(tokens[2], new Value(Integer.parseInt(tokens[0])));
+            } catch (NumberFormatException e) {
+                expressionByVars.put(tokens[2], new Variable(expressionByVars, tokens[0]));
+            }
         } else if(tokens.length == 4 && tokens[0].equals("NOT")) {
             expressionByVars.put(tokens[3], new Not(new Variable(expressionByVars, tokens[1])));
         } else if(tokens.length == 5) {
@@ -18,14 +22,36 @@ public class PartOneCircuitAssembler implements CircuitAssembler {
             final String left = tokens[0];
             final String right = tokens[2];
             final String result = tokens[4];
+            final Integer leftInt = tryParseInt(left);
+            final Integer rightInt = tryParseInt(right);
             if(operator.equals("AND")) {
-                expressionByVars.put(result,
-                        new And(new Variable(expressionByVars, left),
-                                new Variable(expressionByVars, right)));
+                if(leftInt == null && rightInt == null) {
+                    expressionByVars.put(result,
+                            new And(new Variable(expressionByVars, left),
+                                    new Variable(expressionByVars, right)));
+                } else if(leftInt == null) {
+                    expressionByVars.put(result,
+                            new And(new Variable(expressionByVars, left),
+                                    new Value(rightInt)));
+                } else {
+                    expressionByVars.put(result,
+                            new And(new Value(leftInt),
+                                    new Variable(expressionByVars, right)));
+                }
             } else if(operator.equals("OR")) {
-                expressionByVars.put(result,
-                        new Or(new Variable(expressionByVars, left),
-                                new Variable(expressionByVars, right)));
+                if(leftInt == null && rightInt == null) {
+                    expressionByVars.put(result,
+                            new Or(new Variable(expressionByVars, left),
+                                    new Variable(expressionByVars, right)));
+                } else if(leftInt == null) {
+                    expressionByVars.put(result,
+                            new Or(new Variable(expressionByVars, left),
+                                    new Value(rightInt)));
+                } else {
+                    expressionByVars.put(result,
+                            new Or(new Value(leftInt),
+                                    new Variable(expressionByVars, right)));
+                }
             } else if(operator.equals("LSHIFT")) {
                 expressionByVars.put(result,
                         new LShift(new Variable(expressionByVars, left), Integer.parseInt(right)));
@@ -38,6 +64,16 @@ public class PartOneCircuitAssembler implements CircuitAssembler {
         } else {
             throw new IllegalArgumentException("Wrong syntax in circuit '" + circuit + "'");
         }
+    }
+
+    private Integer tryParseInt(String right) {
+        Integer rightInt = null;
+        try {
+            rightInt = Integer.parseInt(right);
+        } catch (NumberFormatException e) {
+
+        }
+        return rightInt;
     }
 
     @Override

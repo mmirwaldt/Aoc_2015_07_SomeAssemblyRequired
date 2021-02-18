@@ -31,6 +31,9 @@ public class PartOneCircuitAssemblerTest {
     private final int xay = 0b0000_0000_0000_0000;
     private final int xaz = 0b0000_0000_0000_0000;
     private final int yaz = z;
+    private final int oneay = 1;
+    private final int ya2 = 2;
+
 
     //                      0b1110_1100_0100_0001;
     //                      0b0010_0110_1001_0101
@@ -39,6 +42,8 @@ public class PartOneCircuitAssemblerTest {
     private final int xoy = y;
     private final int xoz = z;
     private final int yoz = y;
+    private final int oneox = 1;
+    private final int xo2 = 2;
 
     //                      0b1110_1100_0100_0001;
     //                      0b0010_0110_1001_0101
@@ -81,6 +86,16 @@ public class PartOneCircuitAssemblerTest {
 
     @ParameterizedTest
     @MethodSource("circuitAssembler")
+    void test_assign(CircuitAssembler circuitAssembler) {
+        circuitAssembler.assemble(x + " -> x");
+        circuitAssembler.assemble("x -> y");
+        SortedMap<String, Integer> result = circuitAssembler.evaluate();
+        assertEquals(x, result.get("x"));
+        assertEquals(x, result.get("y"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("circuitAssembler")
     void test_NOT(CircuitAssembler circuitAssembler) {
         initVars(circuitAssembler);
         circuitAssembler.assemble( "NOT x -> nx");
@@ -102,11 +117,15 @@ public class PartOneCircuitAssemblerTest {
         circuitAssembler.assemble("x AND z -> xaz");
         circuitAssembler.assemble("y AND z -> yaz");
         circuitAssembler.assemble("z AND u -> zau");
+        circuitAssembler.assemble( "1 AND y -> oneay");
+        circuitAssembler.assemble( "y AND 2 -> ya2");
         final SortedMap<String, Integer> result = circuitAssembler.evaluate();
         assertEquals(xay, result.get("xay"));
         assertEquals(xaz, result.get("xaz"));
         assertEquals(yaz, result.get("yaz"));
         assertEquals(zau, result.get("zau"));
+        assertEquals(oneay, result.get("oneay"));
+        assertEquals(ya2, result.get("ya2"));
     }
 
     @ParameterizedTest
@@ -117,11 +136,15 @@ public class PartOneCircuitAssemblerTest {
         circuitAssembler.assemble("x OR z -> xoz");
         circuitAssembler.assemble("y OR z -> yoz");
         circuitAssembler.assemble("z OR u -> zou");
+        circuitAssembler.assemble( "1 OR x -> oneox");
+        circuitAssembler.assemble( "x OR 2 -> xo2");
         final SortedMap<String, Integer> result = circuitAssembler.evaluate();
         assertEquals(xoy, result.get("xoy"));
         assertEquals(xoz, result.get("xoz"));
         assertEquals(yoz, result.get("yoz"));
         assertEquals(zou, result.get("zou"));
+        assertEquals(oneox, result.get("oneox"));
+        assertEquals(xo2, result.get("xo2"));
     }
 
     @ParameterizedTest
