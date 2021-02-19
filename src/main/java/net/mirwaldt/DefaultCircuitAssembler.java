@@ -101,4 +101,13 @@ public class DefaultCircuitAssembler implements CircuitAssembler {
         }
         return result;
     }
+
+    @Override
+    public int evaluate(String varName) throws NoSuchElementException {
+        Expression expression = expressionByVars.get(varName);
+        if(expression == null) {
+            throw new NoSuchElementException();
+        }
+        return expression.eval();
+    }
 }

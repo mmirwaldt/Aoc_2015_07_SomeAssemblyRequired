@@ -4,16 +4,16 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.NoSuchElementException;
 import java.util.SortedMap;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DefaultCircuitAssemblerTest {
-    private final static CircuitAssembler circuitAssembler = new DefaultCircuitAssembler();
-
     private static Stream<Arguments> circuitAssembler() {
-        return Stream.of(Arguments.of(circuitAssembler));
+        return Stream.of(Arguments.of(new DefaultCircuitAssembler()));
     }
 
     private final int x =  0b0000_0000_0000_0000;
@@ -70,6 +70,18 @@ public class DefaultCircuitAssemblerTest {
         circuitAssembler.assemble(y + " -> y");
         circuitAssembler.assemble(z + " -> z");
         circuitAssembler.assemble(u + " -> u");
+    }
+
+    @ParameterizedTest
+    @MethodSource("circuitAssembler")
+    void test_noCircuit(CircuitAssembler circuitAssembler) {
+        assertEquals(0, circuitAssembler.evaluate().size());
+    }
+
+    @ParameterizedTest
+    @MethodSource("circuitAssembler")
+    void test_noCircuit_evalOneVar(CircuitAssembler circuitAssembler) {
+        assertThrows(NoSuchElementException.class, () -> circuitAssembler.evaluate("foo"));
     }
 
     @ParameterizedTest
@@ -195,5 +207,26 @@ public class DefaultCircuitAssemblerTest {
         assertEquals(65079, result.get("i"));
         assertEquals(123, result.get("x"));
         assertEquals(456, result.get("y"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("circuitAssembler")
+    void test_allGates_evalOneVar(CircuitAssembler circuitAssembler) {
+        circuitAssembler.assemble("123 -> x");
+        circuitAssembler.assemble("456 -> y");
+        circuitAssembler.assemble("x AND y -> d");
+        circuitAssembler.assemble("x OR y -> e");
+        circuitAssembler.assemble("x LSHIFT 2 -> f");
+        circuitAssembler.assemble("y RSHIFT 2 -> g");
+        circuitAssembler.assemble("NOT x -> h");
+        circuitAssembler.assemble("NOT y -> i");
+        assertEquals(72, circuitAssembler.evaluate("d"));
+        assertEquals(507, circuitAssembler.evaluate("e"));
+        assertEquals(492, circuitAssembler.evaluate("f"));
+        assertEquals(114, circuitAssembler.evaluate("g"));
+        assertEquals(65412, circuitAssembler.evaluate("h"));
+        assertEquals(65079, circuitAssembler.evaluate("i"));
+        assertEquals(123, circuitAssembler.evaluate("x"));
+        assertEquals(456, circuitAssembler.evaluate("y"));
     }
 }

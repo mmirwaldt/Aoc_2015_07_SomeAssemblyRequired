@@ -5,7 +5,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.SortedMap;
 
 public class CircuitAssemblerMain {
     public static void main(String[] args) throws IOException {
@@ -13,15 +12,15 @@ public class CircuitAssemblerMain {
 
         final CircuitAssembler circuitAssemblerInPartOne = new DefaultCircuitAssembler();
         assembleCircuit(lines, circuitAssemblerInPartOne);
-        final SortedMap<String, Integer> valuesByNameInPartOne = circuitAssemblerInPartOne.evaluate();
-        System.out.println(valuesByNameInPartOne.get("a")); // result - 16076
+        final int a1 = circuitAssemblerInPartOne.evaluate("a");
+        System.out.println(a1); // result - 16076
 
 
         final CircuitAssembler circuitAssemblerInPartTwo = new DefaultCircuitAssembler();
         assembleCircuit(lines, circuitAssemblerInPartTwo);
-        circuitAssemblerInPartTwo.assemble(valuesByNameInPartOne.get("a") + " -> b");
-        final SortedMap<String, Integer> valuesByNameInPartTwo = circuitAssemblerInPartTwo.evaluate();
-        System.out.println(valuesByNameInPartTwo.get("a")); // result - 2797
+        circuitAssemblerInPartTwo.assemble(a1 + " -> b");
+        final int a2 = circuitAssemblerInPartTwo.evaluate("a");
+        System.out.println(a2); // result - 2797
     }
 
     private static void assembleCircuit(List<String> lines, CircuitAssembler circuitAssemblerInPartOne) {
