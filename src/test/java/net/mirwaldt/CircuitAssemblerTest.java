@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class DefaultCircuitAssemblerTest {
+public class CircuitAssemblerTest {
     private static Stream<Arguments> circuitAssembler() {
         return Stream.of(Arguments.of(new DefaultCircuitAssembler()));
     }
